@@ -2,6 +2,7 @@ package com.cloud.security.filter;
 
 import com.cloud.security.service.UserService;
 import com.cloud.security.vo.UserInfo;
+import com.lambdaworks.crypto.SCryptUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -41,8 +42,9 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
             String password = items[1];
 
             UserInfo userInfo = userService.findByUserName(userName);
-
-            if (userInfo != null && password.equals(userInfo.getPassword())) {
+            // password校验
+//            if (userInfo != null && password.equals(userInfo.getPassword())) {
+            if (userInfo != null && SCryptUtil.check(password, userInfo.getPassword())) {
                 request.setAttribute("user", userInfo);
             }
         }
