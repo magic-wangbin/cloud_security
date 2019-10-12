@@ -21,6 +21,8 @@ public class User {
     @NotBlank(message = "密码不能为空")
     private String password;
 
+    private String permissions;
+
     public UserInfo buildInfo() {
         UserInfo info = new UserInfo();
         BeanUtils.copyProperties(this, info);

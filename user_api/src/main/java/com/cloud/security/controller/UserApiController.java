@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -15,6 +16,19 @@ public class UserApiController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * 登录.
+     */
+    @GetMapping("/login")
+    public void login(@Validated UserInfo userInfo, HttpServletRequest request) {
+        UserInfo info = userService.login(userInfo);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        request.getSession(true).setAttribute("user", info);
+    }
 
     /**
      * 注册.

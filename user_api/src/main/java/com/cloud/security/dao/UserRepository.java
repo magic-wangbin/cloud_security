@@ -28,5 +28,4 @@ public interface UserRepository extends JpaSpecificationExecutor<User>, CrudRepo
      * @return
      */
     List<User> findAllByUserName(String username);
-
 }

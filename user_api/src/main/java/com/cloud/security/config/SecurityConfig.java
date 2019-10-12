@@ -1,5 +1,6 @@
 package com.cloud.security.config;
 
+import com.cloud.security.filter.AclInterceptor;
 import com.cloud.security.filter.AuditLogInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,9 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Autowired
     private AuditLogInterceptor auditLogInterceptor;
 
+    @Autowired
+    private AclInterceptor aclInterceptor;
+
 
     /**
      * 添加应用拦截器.
@@ -30,6 +34,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(auditLogInterceptor);
+        registry.addInterceptor(aclInterceptor);
     }
 
     @Bean
