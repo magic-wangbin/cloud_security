@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,11 +24,20 @@ public class UserApiController {
     @GetMapping("/login")
     public void login(@Validated UserInfo userInfo, HttpServletRequest request) {
         UserInfo info = userService.login(userInfo);
+        // 每次登录重新创建session
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
         request.getSession(true).setAttribute("user", info);
+    }
+
+    /**
+     * 退出.
+     */
+    @GetMapping("/logout")
+    public void logout(HttpServletRequest request) throws IOException {
+        request.getSession().invalidate();
     }
 
     /**
@@ -50,7 +60,8 @@ public class UserApiController {
     @GetMapping("/{id}")
     public UserInfo get(@PathVariable Long id, HttpServletRequest request) {
 
-        UserInfo user = (UserInfo) request.getAttribute("user");
+        UserInfo user = (UserInfo) request.getSession().getAttribute("user");
+
         if (user == null || !id.equals(user.getUserId())) {
             throw new RuntimeException("身份认证信息异常，获取用户信息失败");
         }

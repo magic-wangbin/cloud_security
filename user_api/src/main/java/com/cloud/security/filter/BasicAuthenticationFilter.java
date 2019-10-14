@@ -14,6 +14,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -45,11 +46,20 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
             // password校验
 //            if (userInfo != null && password.equals(userInfo.getPassword())) {
             if (userInfo != null && SCryptUtil.check(password, userInfo.getPassword())) {
-                request.setAttribute("user", userInfo);
+                request.getSession().setAttribute("user", userInfo);
+                request.getSession().setAttribute("temp", "yes");
             }
         }
 
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            // 每次HttpBasic创建的session的请求完毕后直接失效掉
+            HttpSession httpSession = request.getSession();
+            if (httpSession.getAttribute("temp") != null) {
+                httpSession.invalidate();
+            }
+        }
 
 
     }
