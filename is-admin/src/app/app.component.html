@@ -2,8 +2,13 @@
     <h1>
         Welcome to {{ title }}！！
     </h1>
-</div>
 
+    <button (click)="getOrder()" type="button" class="btn btn-primary">Get Order Info</button>
+    <p>order id : {{ order.id }}</p>
+    <p>order product id : {{ order.productId }}</p>
+    <button (click)="logout()" type="button" class="btn btn-primary">Logout</button>
+</div>
+<!-- 登录操作移到认证服务器上
 <div class="row">
     <div class="col-lg-4"></div>
     <div class="col-lg-4">
@@ -27,4 +32,5 @@
     </div>
     <div class="col-lg-4"></div>
 </div>
+-->
 

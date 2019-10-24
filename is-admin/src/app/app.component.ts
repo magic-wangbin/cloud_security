@@ -1,29 +1,62 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent {
 
-  title = 'imooc microservice security test！！！';
-  authenticated=false;
-  credentials = {
-    username:'zhangsan',
-    password:'123456'
-  };
+    title = 'imooc microservice security test！！！';
+    authenticated = false;
+    credentials = {
+        username: 'zhangsan',
+        password: '123456'
+    };
 
-  constructor(private http: HttpClient){
-  }
+    order = {};
 
-  login(){
-    this.http.post('login',this.credentials).subscribe(()=>{
-      this.authenticated = true;
 
-    },()=>{
-      alert("login fail");
-    })
-  }
+    constructor(private http: HttpClient) {
+        this.http.get("me").subscribe(data => {
+            if (data) {
+                this.authenticated = true
+            }
+            if (!this.authenticated) {
+                window.location.href = "http://auth.magic.com:9090/oauth/authorize?"
+                    + "client_id=admin"
+                    + "&redirect_uri=http://admin.magic.com:8080/oauth/callback"
+                    + "&response_type=code"
+                    + "&state=abc";
+            }
+        })
+    }
+
+    login() {
+        this.http.post('login', this.credentials).subscribe(() => {
+            this.authenticated = true;
+
+        }, () => {
+            alert("login fail");
+        })
+    }
+
+    getOrder() {
+        this.http.get('api/order/orders/1').subscribe(data => {
+            this.order = data;
+        }, () => {
+            alert('get order fail');
+        });
+    }
+
+    // 退出
+    logout() {
+        this.http.post('logout', this.credentials).subscribe(() => {
+            this.authenticated = false;
+        }, () => {
+            alert("logout fail");
+        })
+    }
+
 }

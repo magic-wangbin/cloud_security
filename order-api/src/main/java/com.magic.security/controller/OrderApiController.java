@@ -28,7 +28,12 @@ public class OrderApiController {
      * @return
      */
     @GetMapping("/{id}")
-    public OrderInfo getInfo(@PathVariable Long id) {
-        return null;
+    public OrderInfo getInfo(@PathVariable Long id, @RequestHeader String username) {
+        log.info("user is " + username);
+        log.info("orderId is " + id);
+        OrderInfo info = new OrderInfo();
+        info.setId(id);
+        info.setProductId(id * 5);
+        return info;
     }
 }

@@ -3,9 +3,9 @@ server:
 zuul:
   routes:
     token:
-      url: http://localhost:9090
+      url: http://auth.magic.com:9090
     order:
-      url: http://localhost:9080
+      url: http://order.magic.com:9080
   sensitive-headers:
 
   ratelimit:

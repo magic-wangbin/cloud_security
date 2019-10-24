@@ -1,3 +1,9 @@
+zuul:
+  routes:
+    api:
+      url: http://gateway.magic.com:9070
+  sensitive-headers:
+
 spring:
   application:
     name: admin

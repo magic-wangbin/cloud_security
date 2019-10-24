@@ -32,7 +32,7 @@ webpackEmptyAsyncContext.id = "./$$_lazy_route_resource lazy recursive";
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align:center\">\r\n    <h1>\r\n        Welcome to {{ title }}！！\r\n    </h1>\r\n</div>\r\n\r\n<div class=\"row\">\r\n    <div class=\"col-lg-4\"></div>\r\n    <div class=\"col-lg-4\">\r\n        <div [hidden]=\"authenticated\">\r\n            <p>please login</p>\r\n            <form role=\"form\" (submit)=\"login()\">\r\n                <div class=\"form-group\">\r\n                    <label for=\"username\">Username:</label>\r\n                    <input id=\"username\" name=\"username\" type=\"text\" class=\"form-control\" [(ngModel)]=\"credentials.username\" />\r\n                </div>\r\n\r\n                <div class=\"form-group\">\r\n                    <label for=\"password\">Password:</label>\r\n                    <input id=\"password\" name=\"password\" type=\"text\" class=\"form-control\" [(ngModel)]=\"credentials.password\" />\r\n                </div>\r\n\r\n                <button type=\"submit\" class=\"btn btn-primary\">Login</button>\r\n            </form>\r\n\r\n        </div>\r\n    </div>\r\n    <div class=\"col-lg-4\"></div>\r\n</div>\r\n\r\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<div [hidden]=\"!authenticated\" style=\"text-align:center\">\r\n    <h1>\r\n        Welcome to {{ title }}！！\r\n    </h1>\r\n\r\n    <button (click)=\"getOrder()\" type=\"button\" class=\"btn btn-primary\">Get Order Info</button>\r\n    <p>order id : {{ order.id }}</p>\r\n    <p>order product id : {{ order.productId }}</p>\r\n    <button (click)=\"logout()\" type=\"button\" class=\"btn btn-primary\">Logout</button>\r\n</div>\r\n<!-- 登录操作移到认证服务器上\r\n<div class=\"row\">\r\n    <div class=\"col-lg-4\"></div>\r\n    <div class=\"col-lg-4\">\r\n        <div [hidden]=\"authenticated\">\r\n            <p>please login</p>\r\n            <form role=\"form\" (submit)=\"login()\">\r\n                <div class=\"form-group\">\r\n                    <label for=\"username\">Username:</label>\r\n                    <input id=\"username\" name=\"username\" type=\"text\" class=\"form-control\" [(ngModel)]=\"credentials.username\" />\r\n                </div>\r\n\r\n                <div class=\"form-group\">\r\n                    <label for=\"password\">Password:</label>\r\n                    <input id=\"password\" name=\"password\" type=\"text\" class=\"form-control\" [(ngModel)]=\"credentials.password\" />\r\n                </div>\r\n\r\n                <button type=\"submit\" class=\"btn btn-primary\">Login</button>\r\n            </form>\r\n\r\n        </div>\r\n    </div>\r\n    <div class=\"col-lg-4\"></div>\r\n</div>\r\n-->\r\n\r\n");
 
 /***/ }),
 
@@ -303,12 +303,40 @@ let AppComponent = class AppComponent {
             username: 'zhangsan',
             password: '123456'
         };
+        this.order = {};
+        this.http.get("me").subscribe(data => {
+            if (data) {
+                this.authenticated = true;
+            }
+            if (!this.authenticated) {
+                window.location.href = "http://auth.magic.com:9090/oauth/authorize?"
+                    + "client_id=admin"
+                    + "&redirect_uri=http://admin.magic.com:8080/oauth/callback"
+                    + "&response_type=code"
+                    + "&state=abc";
+            }
+        });
     }
     login() {
         this.http.post('login', this.credentials).subscribe(() => {
             this.authenticated = true;
         }, () => {
             alert("login fail");
+        });
+    }
+    getOrder() {
+        this.http.get('api/order/orders/1').subscribe(data => {
+            this.order = data;
+        }, () => {
+            alert('get order fail');
+        });
+    }
+    // 退出
+    logout() {
+        this.http.post('logout', this.credentials).subscribe(() => {
+            this.authenticated = false;
+        }, () => {
+            alert("logout fail");
         });
     }
 };
