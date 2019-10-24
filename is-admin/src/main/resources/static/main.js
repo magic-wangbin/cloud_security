@@ -335,6 +335,8 @@ let AppComponent = class AppComponent {
     logout() {
         this.http.post('logout', this.credentials).subscribe(() => {
             this.authenticated = false;
+            // 本地客户端退出登录，清空session，跳转到认证中心也去清除session，成功后回调到当前服务的首页（登录页面）
+            window.location.href = "http://auth.magic.com:9090/logout?redirect_uri=http://admin.magic.com:8080";
         }, () => {
             alert("logout fail");
         });

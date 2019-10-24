@@ -54,7 +54,7 @@ public class AdminApplication {
     @GetMapping("/oauth/callback")
     public void callback(@RequestParam String code, String state, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        log.info("state 标识值为：", state);
+        log.info("state 标识值为：" + state);
 
         // 获取token的请求
         String oauthServiceUrl = "http://gateway.magic.com:9070/token/oauth/token";
