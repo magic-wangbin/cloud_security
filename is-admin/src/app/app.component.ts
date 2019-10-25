@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
     selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent {
     order = {};
 
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private cookieService: CookieService) {
         this.http.get("api/user/me").subscribe(data => {
             if (data) {
                 this.authenticated = true
@@ -52,6 +53,8 @@ export class AppComponent {
 
     // 退出
     logout() {
+        this.cookieService.delete("magic_access_token", "/", "magic.com");
+        this.cookieService.delete("magic_refresh_token", "/", "magic.com");
         this.http.post('logout', this.credentials).subscribe(() => {
             this.authenticated = false;
             // 本地客户端退出登录，清空session，跳转到认证中心也去清除session，成功后回调到当前服务的首页（登录页面）

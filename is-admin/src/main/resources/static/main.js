@@ -291,12 +291,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm2015/http.js");
+/* harmony import */ var ngx_cookie_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ngx-cookie-service */ "./node_modules/ngx-cookie-service/ngx-cookie-service.js");
+
 
 
 
 let AppComponent = class AppComponent {
-    constructor(http) {
+    constructor(http, cookieService) {
         this.http = http;
+        this.cookieService = cookieService;
         this.title = 'imooc microservice security test！！！';
         this.authenticated = false;
         this.credentials = {
@@ -333,6 +336,8 @@ let AppComponent = class AppComponent {
     }
     // 退出
     logout() {
+        this.cookieService.delete("magic_access_token", "/", "magic.com");
+        this.cookieService.delete("magic_refresh_token", "/", "magic.com");
         this.http.post('logout', this.credentials).subscribe(() => {
             this.authenticated = false;
             // 本地客户端退出登录，清空session，跳转到认证中心也去清除session，成功后回调到当前服务的首页（登录页面）
@@ -343,7 +348,8 @@ let AppComponent = class AppComponent {
     }
 };
 AppComponent.ctorParameters = () => [
-    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"] }
+    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"] },
+    { type: ngx_cookie_service__WEBPACK_IMPORTED_MODULE_3__["CookieService"] }
 ];
 AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
