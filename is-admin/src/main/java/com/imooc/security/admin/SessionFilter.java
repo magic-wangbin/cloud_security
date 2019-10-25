@@ -55,14 +55,19 @@ public class SessionFilter extends ZuulFilter {
                 MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
                 params.add("grant_type", "refresh_token");
                 params.add("refresh_token", token.getRefresh_token());
-
-
                 HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-                ResponseEntity<TokenInfo> newToken = restTemplate.exchange(oauthServiceUrl, HttpMethod.POST, entity, TokenInfo.class);
-                request.getSession().setAttribute("token", newToken.getBody().init());// 获取token，并设置过期时间
 
-                tokenValue = newToken.getBody().getAccess_token();
-
+                try {
+                    ResponseEntity<TokenInfo> newToken = restTemplate.exchange(oauthServiceUrl, HttpMethod.POST, entity, TokenInfo.class);
+                    request.getSession().setAttribute("token", newToken.getBody().init());// 获取token，并设置过期时间
+                    tokenValue = newToken.getBody().getAccess_token();
+                } catch (Exception e) {
+                    // 刷新令牌失败的处理
+                    requestContext.setSendZuulResponse(false);// 服务不会继续往下执行
+                    requestContext.setResponseStatusCode(500);
+                    requestContext.setResponseBody("{\"message\":\"refresh fail\"}");
+                    requestContext.getResponse().setContentType("application/json");
+                }
             }
             requestContext.addZuulRequestHeader("Authorization", "bearer " + tokenValue);
         }
