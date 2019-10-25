@@ -2,6 +2,8 @@ server:
   port: 9070
 zuul:
   routes:
+    user:
+      url: http://auth.magic.com:9090
     token:
       url: http://auth.magic.com:9090
     order:

@@ -304,7 +304,7 @@ let AppComponent = class AppComponent {
             password: '123456'
         };
         this.order = {};
-        this.http.get("me").subscribe(data => {
+        this.http.get("api/user/me").subscribe(data => {
             if (data) {
                 this.authenticated = true;
             }

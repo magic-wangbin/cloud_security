@@ -19,7 +19,7 @@ export class AppComponent {
 
 
     constructor(private http: HttpClient) {
-        this.http.get("me").subscribe(data => {
+        this.http.get("api/user/me").subscribe(data => {
             if (data) {
                 this.authenticated = true
             }

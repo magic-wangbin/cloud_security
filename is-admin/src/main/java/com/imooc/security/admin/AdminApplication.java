@@ -13,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -72,7 +73,21 @@ public class AdminApplication {
 
         ResponseEntity<TokenInfo> token = restTemplate.exchange(oauthServiceUrl, HttpMethod.POST, entity, TokenInfo.class);
 
-        request.getSession().setAttribute("token", token.getBody().init());
+        // 使用session的实现方式
+//        request.getSession().setAttribute("token", token.getBody().init());
+
+        // 使用Cookie的是实现方式
+        Cookie accessTokenCookie = new Cookie("magic_access_token", token.getBody().getAccess_token());
+        accessTokenCookie.setMaxAge(token.getBody().getExpires_in().intValue());
+        accessTokenCookie.setDomain("magic.com");
+        accessTokenCookie.setPath("/");
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("magic_refresh_token", token.getBody().getRefresh_token());
+        refreshTokenCookie.setMaxAge(2592000);
+        refreshTokenCookie.setDomain("magic.com");
+        refreshTokenCookie.setPath("/");
+        response.addCookie(refreshTokenCookie);
 
         response.sendRedirect("/");
     }
